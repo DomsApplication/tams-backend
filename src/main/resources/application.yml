@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: shavika-server-websocket
+  main:
+    banner-mode: log
+
+server:
+  port: 8999
+  servlet:
+    context-path: /
+
+websocket:
+  path: /websocket
+  database:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: tams-database-dev-do-user-19487076-0.d.db.ondigitalocean.com
+    port: 25060
+    username: tams_dev
+    password: AVNS_-YWEJHXPUB-BOZvGgdY
+    name: tams_dev
+
+logging:
+  path: ${SKMC_HOME}/log/
+  level:
+    root: INFO
+    com:
+      shavika: INFO
