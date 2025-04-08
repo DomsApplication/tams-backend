@@ -29,7 +29,7 @@ websocket:
     name: tams_dev
 
 logging:
-  path: ${SKMC_HOME}/log/
+  path: ./log/
   level:
     root: INFO
     com:
