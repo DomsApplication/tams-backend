@@ -1,8 +1,17 @@
 spring:
   application:
-    name: shavika-server-websocket
+    name: tams
   main:
     banner-mode: log
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/tams_dev?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
 
 server:
   port: 8999
@@ -13,10 +22,10 @@ websocket:
   path: /websocket
   database:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    host: tams-database-dev-do-user-19487076-0.d.db.ondigitalocean.com
-    port: 25060
-    username: tams_dev
-    password: AVNS_-YWEJHXPUB-BOZvGgdY
+    host: localhost
+    port: 3306
+    username: root
+    password: root
     name: tams_dev
 
 logging:
