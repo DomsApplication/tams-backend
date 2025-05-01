@@ -1,2 +1,2 @@
 # tams-backend
-Time attendance management system web application
+Time Attendance Management System java backend server

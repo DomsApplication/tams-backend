@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: shavika-server-websocket
+  main:
+    banner-mode: log
+
+server:
+  port: 8999
+  servlet:
+    context-path: /
+
+websocket:
+  path: /websocket
+  database:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: localhost
+    port: 3306
+    username: device_java
+    password: device_java
+    name: device_java
+
+logging:
+  path: ${SKMC_HOME}/log/
+  level:
+    root: INFO
+    com:
+      shavika: INFO
