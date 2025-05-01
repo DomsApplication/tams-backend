@@ -1,4 +1,4 @@
-package com.shavika.websever;
+package com.shavika.websever.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/web/static/**")
                 .addResourceLocations("classpath:/static/static/");
     }
+
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {

@@ -1,4 +1,4 @@
-package com.shavika.websever;
+package com.shavika.websever.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;

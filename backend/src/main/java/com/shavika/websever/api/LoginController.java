@@ -3,7 +3,10 @@ package com.shavika.websever.api;
 import com.shavika.websever.api.webmodels.ErrorResponse;
 import com.shavika.websever.api.webmodels.LoginBasicAuth;
 import com.shavika.websever.api.webmodels.LoginRequest;
+import com.shavika.websever.api.webmodels.TokenResponse;
 import com.shavika.websever.services.LoginService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -85,13 +88,20 @@ public class LoginController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<?> authenticate(@RequestBody LoginBasicAuth loginBasicAuth) {
+    public ResponseEntity<?> authenticate(@RequestBody LoginBasicAuth loginBasicAuth, HttpServletResponse response) {
         try {
-            return new ResponseEntity<>(loginService.authenticate(loginBasicAuth), HttpStatus.OK);
+            TokenResponse token = loginService.authenticate(loginBasicAuth);
+            // Set token in cookie
+            Cookie cookie = new Cookie("token", token.getToken());
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(30 * 60);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            return new ResponseEntity<>(token, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            ErrorResponse response = ErrorResponse.builder().message(e.getMessage()).build();
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            ErrorResponse errorResponse = ErrorResponse.builder().message(e.getMessage()).build();
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
