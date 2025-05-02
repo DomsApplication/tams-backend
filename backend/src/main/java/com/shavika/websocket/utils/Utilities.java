@@ -462,8 +462,17 @@ public class Utilities {
                 .claims(claims)
                 .subject(loginResponse.getUserId())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) // 30 minutes validity
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1)) // 30 minutes validity
                 .signWith(getSignInKey()).compact();
+    }
+
+    public static Claims parseToken(String token) throws Exception {
+        return Jwts
+                .parser()
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public static Map<String, Object> extractAllClaims(String token) throws  Exception {
