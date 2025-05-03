@@ -104,4 +104,15 @@ public class LoginController {
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/ping")
+    public ResponseEntity<?> pingForActive() {
+        try {
+            return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ErrorResponse response = ErrorResponse.builder().message(e.getMessage()).build();
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
