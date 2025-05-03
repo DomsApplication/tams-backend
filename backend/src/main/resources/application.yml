@@ -13,11 +13,11 @@ websocket:
   path: /websocket
   database:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    host: localhost
+    host: 127.0.0.1
     port: 3306
-    username: device_java
-    password: device_java
-    name: device_java
+    username: tams_user
+    password: tams_user
+    name: tams_java
 
 logging:
   path: ${SKMC_HOME}/log/
@@ -25,3 +25,6 @@ logging:
     root: INFO
     com:
       shavika: INFO
+
+cors:
+  allowed-origins: http://localhost:3000,http://localhost:5173
