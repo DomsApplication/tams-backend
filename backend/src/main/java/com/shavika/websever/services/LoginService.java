@@ -176,6 +176,7 @@ public class LoginService {
         this.saveOrUpdate(login);
         return TokenResponse.builder()
                 .message("success")
+                .userName(loginBasicAuth.getUserId())
                 .token(token)
                 .build();
     }

@@ -17,4 +17,7 @@ public class TokenResponse {
     @JacksonXmlProperty(localName = "token")
     private String token;
 
+    @JacksonXmlProperty(localName = "userName")
+    private String userName;
+
 }
