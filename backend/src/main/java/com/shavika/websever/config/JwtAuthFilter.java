@@ -70,6 +70,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
         }
+        else{
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token error");
+            return;
+        }
 
         filterChain.doFilter(request, response);
     }
