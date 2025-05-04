@@ -71,7 +71,7 @@ jobs:
 
       # Step 4: Retrieve DB Cluster ID
       - name: Retrieve DB Cluster ID
-        if: env.DATABSE_EXISTS == 'false'
+        if: env.DATABSE_EXISTS == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -101,7 +101,7 @@ jobs:
 
       # Step 6: Retrieve DB connection info's
       - name: Retrieve Connection Info
-        if: env.DATABSE_EXISTS == 'false'
+        if: env.DATABSE_EXISTS == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -109,7 +109,8 @@ jobs:
 
           # Get connection details
           CONN_JSON=$(doctl databases connection "$CLUSTER_ID" --output json)
-          
+          echo "CONN JSON=$CONN_JSON"
+
           DB_HOST=$(echo "$CONN_JSON" | jq -r '.Host')
           DB_PORT=$(echo "$CONN_JSON" | jq -r '.Port')
           echo "DB_HOST=$DB_HOST" >> "$GITHUB_ENV"
@@ -117,7 +118,7 @@ jobs:
 
         # Step 7: Set DB connection details in Github environments   
       - name: Set DB connection environments in GitHub Secrets
-        if: env.DATABSE_EXISTS == 'false'
+        if: env.DATABSE_EXISTS == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
