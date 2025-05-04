@@ -24,6 +24,12 @@ jobs:
       packages: read
 
     steps:
+      # Step 0: Install required softwares on ubuntu-latest
+      - name: Install required software-package
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
       # Step 1: Install and authenticate doctl
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -113,8 +119,8 @@ jobs:
           echo "$CONN_JSON" | jq 'keys'          
           echo "CONN JSON=$CONN_JSON"
 
-          DB_HOST=$(echo "$CONN_JSON" | jq -r '.[0].host')
-          DB_PORT=$(echo "$CONN_JSON" | jq -r '.[0].port')
+          DB_HOST=$(echo "$CONN_JSON" | jq -r '.host')
+          DB_PORT=$(echo "$CONN_JSON" | jq -r '.port')
           echo "DB_HOST=$DB_HOST" >> "$GITHUB_ENV"
           echo "DB_PORT=$DB_PORT" >> "$GITHUB_ENV"
 
