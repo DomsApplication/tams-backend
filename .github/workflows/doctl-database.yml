@@ -24,6 +24,12 @@ jobs:
       packages: read
 
     steps:
+      # Step 0: Install required softwares on ubuntu-latest
+      - name: Install required software-package
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
       # Step 1: Install and authenticate doctl
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -106,14 +112,17 @@ jobs:
         run: |
           set -euo pipefail
           CLUSTER_ID=${{ env.CLUSTER_ID }}
-
           # Get connection details
           CONN_JSON=$(doctl databases connection "$CLUSTER_ID" --output json)
           
-          DB_HOST=$(echo "$CONN_JSON" | jq -r '.Host')
-          DB_PORT=$(echo "$CONN_JSON" | jq -r '.Port')
+          DB_HOST=$(echo "$CONN_JSON" | jq -r '.host')
+          DB_PORT=$(echo "$CONN_JSON" | jq -r '.port')
+          
           echo "DB_HOST=$DB_HOST" >> "$GITHUB_ENV"
           echo "DB_PORT=$DB_PORT" >> "$GITHUB_ENV"
+          
+          echo "DB HOST=$DB_HOST"
+          echo "DB PORT=$DB_PORT"
 
         # Step 7: Set DB connection details in Github environments   
       - name: Set DB connection environments in GitHub Secrets
@@ -126,10 +135,11 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           "/repos/${{ github.repository }}/environments/${{ github.event.inputs.environment || 'N/A' }}"
           
+          echo "DB PASSWORD=$DB_PASSWORD"
           # Set environment variables
           gh variable set DB_CLUSTER_ID --env ${{ github.event.inputs.environment || 'N/A' }} --repo ${{ github.repository }} --body "${{ env.CLUSTER_ID }}"
           gh variable set DB_HOST --env ${{ github.event.inputs.environment || 'N/A' }} --repo ${{ github.repository }} --body "${{ env.DB_HOST }}"
           gh variable set DB_PORT --env ${{ github.event.inputs.environment || 'N/A' }} --repo ${{ github.repository }} --body "${{ env.DB_PORT }}"
-          
+
           # Set secret
           echo -n "${{ env.DB_PASSWORD }}" | gh secret set DB_PASSWORD --env ${{ github.event.inputs.environment || 'N/A' }} --repo ${{ github.repository }}
