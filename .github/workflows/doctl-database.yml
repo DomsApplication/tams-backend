@@ -135,11 +135,11 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           "/repos/${{ github.repository }}/environments/${{ github.event.inputs.environment || 'N/A' }}"
           
+          echo "DB PASSWORD=$DB_PASSWORD"
           # Set environment variables
           gh variable set DB_CLUSTER_ID --env ${{ github.event.inputs.environment || 'N/A' }} --repo ${{ github.repository }} --body "${{ env.CLUSTER_ID }}"
           gh variable set DB_HOST --env ${{ github.event.inputs.environment || 'N/A' }} --repo ${{ github.repository }} --body "${{ env.DB_HOST }}"
           gh variable set DB_PORT --env ${{ github.event.inputs.environment || 'N/A' }} --repo ${{ github.repository }} --body "${{ env.DB_PORT }}"
-          gh variable set DB_PASSWORD --env ${{ github.event.inputs.environment || 'N/A' }} --repo ${{ github.repository }} --body "${{ env.DB_PASSWORD }}"
 
           # Set secret
           echo -n "${{ env.DB_PASSWORD }}" | gh secret set DB_PASSWORD --env ${{ github.event.inputs.environment || 'N/A' }} --repo ${{ github.repository }}
