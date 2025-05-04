@@ -61,7 +61,7 @@ jobs:
           echo "CLUSTER_NAME=${{ vars.DB_INSTANCE_NAME }}-${{ inputs.environment }}" >> "$GITHUB_ENV"
 
           # Create the DB cluster in blr1 (Bangalore), 1vCPU/1GB Memory, 10GB disk, single-node, MySQL 8
-          doctl databases create ${{ env.CLUSTER_NAME }} \
+          doctl databases create "${{ env.CLUSTER_NAME }}" \
             --region blr1 \
             --engine mysql \
             --version 8 \
