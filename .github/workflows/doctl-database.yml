@@ -111,8 +111,8 @@ jobs:
           CONN_JSON=$(doctl databases connection "$CLUSTER_ID" --output json)
           echo "CONN JSON=$CONN_JSON"
 
-          DB_HOST=$(echo "$CONN_JSON" | jq -r '.host')
-          DB_PORT=$(echo "$CONN_JSON" | jq -r '.port')
+          DB_HOST=$(echo "$CONN_JSON" | jq -r '.[0].host')
+          DB_PORT=$(echo "$CONN_JSON" | jq -r '.[0].port')
           echo "DB_HOST=$DB_HOST" >> "$GITHUB_ENV"
           echo "DB_PORT=$DB_PORT" >> "$GITHUB_ENV"
 
