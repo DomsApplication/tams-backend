@@ -107,10 +107,11 @@ jobs:
           set -euo pipefail
           CLUSTER_ID=${{ env.CLUSTER_ID }}
 
-          # Get connection details (host, port, etc.) for the cluster:contentReference[oaicite:6]{index=6}
-          CONN_JSON=$(doctl databases connection "$CLUSTER_ID" -o json)
-          HOST=$(echo "$CONN_JSON" | jq -r '.[0].Host')
-          PORT=$(echo "$CONN_JSON" | jq -r '.[0].Port')
+          # Get connection details
+          CONN_JSON=$(doctl databases connection "$CLUSTER_ID" --output json)
+          
+          DB_HOST=$(echo "$CONN_JSON" | jq -r '.Host')
+          DB_PORT=$(echo "$CONN_JSON" | jq -r '.Port')
           echo "DB_HOST=$DB_HOST" >> "$GITHUB_ENV"
           echo "DB_PORT=$DB_PORT" >> "$GITHUB_ENV"
 
