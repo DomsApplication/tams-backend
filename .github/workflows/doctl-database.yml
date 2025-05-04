@@ -58,11 +58,8 @@ jobs:
           set -euo pipefail
           echo "Creating MySQL 8 cluster......."
           
-          echo "CLUSTER_NAME=${{ vars.DB_INSTANCE_NAME }}-${{ inputs.environment }}" >> "$GITHUB_ENV"
-          echo "CLUSTER NAME: $CLUSTER_NAME"
-
           # Create the DB cluster in blr1 (Bangalore), 1vCPU/1GB Memory, 10GB disk, single-node, MySQL 8
-          doctl databases create "$CLUSTER_NAME" \
+          doctl databases create ${{ vars.DB_INSTANCE_NAME }}-${{ inputs.environment }} \
             --region blr1 \
             --engine mysql \
             --version 8 \
@@ -70,7 +67,7 @@ jobs:
             --num-nodes 1 \
             --storage-size-mib 10240 \
             --wait
-          echo "✅ Database is created successfully with the name of '$CLUSTER_NAME' "
+          echo "✅ Database is created successfully with the name of ${{ vars.DB_INSTANCE_NAME }}-${{ inputs.environment }} "
 
       # Step 4: Retrieve DB Cluster ID
       - name: Retrieve DB Cluster ID
@@ -78,7 +75,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          CLUSTER_ID=$(doctl databases list --output json | jq -r ".[] | select(.name == \"${{ env.CLUSTER_NAME }}\") | .id")
+          CLUSTER_ID=$(doctl databases list --output json | jq -r ".[] | select(.name == \"${{ vars.DB_INSTANCE_NAME }}-${{ inputs.environment }}\") | .id")
           echo "Cluster ID: $CLUSTER_ID"
           echo "CLUSTER_ID=$CLUSTER_ID" >> "$GITHUB_ENV"
 
