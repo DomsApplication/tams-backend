@@ -109,6 +109,8 @@ jobs:
 
           # Get connection details
           CONN_JSON=$(doctl databases connection "$CLUSTER_ID" --output json)
+          echo "$CONN_JSON" | jq 'type'
+          echo "$CONN_JSON" | jq 'keys'          
           echo "CONN JSON=$CONN_JSON"
 
           DB_HOST=$(echo "$CONN_JSON" | jq -r '.[0].host')
