@@ -114,10 +114,13 @@ jobs:
           CLUSTER_ID=${{ env.CLUSTER_ID }}
           # Get connection details
           CONN_JSON=$(doctl databases connection "$CLUSTER_ID" --database "${{ vars.DATABSE_NAME }}" --user "${{ vars.DB_USER_NAME }}" --output json)
+          
           DB_HOST=$(echo "$CONN_JSON" | jq -r '.host')
           DB_PORT=$(echo "$CONN_JSON" | jq -r '.port')
+          
           echo "DB_HOST=$DB_HOST" >> "$GITHUB_ENV"
           echo "DB_PORT=$DB_PORT" >> "$GITHUB_ENV"
+          
           echo "DB HOST=$DB_HOST"
           echo "DB PORT=$DB_PORT"
 
