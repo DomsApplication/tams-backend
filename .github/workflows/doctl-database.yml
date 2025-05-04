@@ -32,7 +32,7 @@ jobs:
 
       - name: Debug Information
         run: |
-          echo environment: ${{ github.event.inputs.environment || 'N/A' }}
+          echo environment: ${{ inputs.environment || 'N/A' }}
           echo INSTANCE_NAME: ${{ vars.DB_INSTANCE_NAME }}
           echo DATABSE_NAME: ${{ vars.DATABSE_NAME }}
           echo USER_NAME: ${{ vars.DB_USER_NAME }}
@@ -59,9 +59,10 @@ jobs:
           echo "Creating MySQL 8 cluster......."
           
           echo "CLUSTER_NAME=${{ vars.DB_INSTANCE_NAME }}-${{ inputs.environment }}" >> "$GITHUB_ENV"
+          echo "CLUSTER NAME: $CLUSTER_NAME"
 
           # Create the DB cluster in blr1 (Bangalore), 1vCPU/1GB Memory, 10GB disk, single-node, MySQL 8
-          doctl databases create "${{ env.CLUSTER_NAME }}" \
+          doctl databases create "$CLUSTER_NAME" \
             --region blr1 \
             --engine mysql \
             --version 8 \
@@ -69,7 +70,7 @@ jobs:
             --num-nodes 1 \
             --storage-size-mib 10240 \
             --wait
-          echo "✅ Database is created successfully with the name of '${{ env.CLUSTER_NAME }}'"
+          echo "✅ Database is created successfully with the name of '$CLUSTER_NAME' "
 
       # Step 4: Retrieve DB Cluster ID
       - name: Retrieve DB Cluster ID
