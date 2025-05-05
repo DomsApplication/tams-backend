@@ -71,7 +71,7 @@ jobs:
 
       - name: Check path details
         run: |
-          cd cd ${{ steps.vars.outputs.working-directory }}/target
+          cd ${{ steps.vars.outputs.working-directory }}/target
           pwd
           ls -l
 
