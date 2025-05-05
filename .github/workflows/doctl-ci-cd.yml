@@ -109,6 +109,16 @@ jobs:
             pwd
             ls -l
 
+            # Run new JAR in background with config and capture PID
+            echo "Starting new application..."
+            nohup java -jar ${{ steps.vars.outputs.jar-filename }} --spring.config.location=application-${{ steps.vars.outputs.environment }}.yml > app.log 2>&1 &
+            echo $! > app.pid
+
+            # Confirm
+            echo "Application started with PID: $(cat app.pid)"
+            ls -l
+
+
 
 
 
