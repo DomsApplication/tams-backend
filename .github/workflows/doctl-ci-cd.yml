@@ -48,12 +48,12 @@ jobs:
           echo github.event.pull_request.merged: ${{ github.event.pull_request.merged }}
           echo HOST: ${{ vars.BACKEND_DROPLET_IP }}
 
-      - name: Build with maven
+      - name: Build and package with maven
         run: |
           cd ./backend
           mvn clean package -Dmaven.test.skip
 
-      - name: Build with maven
+      - name: Check path details
         run: |
           cd ./backend
           pwd
