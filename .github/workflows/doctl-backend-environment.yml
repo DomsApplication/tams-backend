@@ -141,3 +141,11 @@ jobs:
             echo "Java version"
             echo "======================================================"
             java -version
+
+            echo "=============> Setting SKMC_HOME"
+            sudo mkdir -p /home/shavika-tams
+            sudo chown "$USER:$USER" /home/shavika-tams
+            echo "export SKMC_HOME=/home/shavika-tams" | sudo tee -a /etc/profile
+            # Apply changes
+            source /etc/profile
+            echo "Environment setup complete........"
