@@ -127,7 +127,7 @@ jobs:
           sleep 90  # Wait for 90 seconds before attempting SSH connection
 
       - name: Post Deployment install additional softwares
-        if: env.DROPLET_EXISTS == 'true'
+        if: env.DROPLET_EXISTS == 'false'
         uses: appleboy/ssh-action@v1.2.1
         with:
           host: ${{ vars.BACKEND_DROPLET_IP }}
