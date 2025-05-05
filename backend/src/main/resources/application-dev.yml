@@ -16,7 +16,7 @@ websocket:
     host: tams-db-inst-dev-do-user-21795668-0.g.db.ondigitalocean.com
     port: 25060
     username: tams_user
-    password: AVNS_aNo8ipoyuf3SmYEbIlA
+    password: xxxxxxxxxxxxxxxxxx
     name: tams_database
 
 logging:
