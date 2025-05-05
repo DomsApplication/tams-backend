@@ -78,7 +78,18 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 600s
           overwrite: true
-          source: ./backend/target/shavika-websocket-standalone-1.0.0.jar
+          source: ${{ steps.vars.outputs.working-directory }}/target/${{ steps.vars.outputs.jar-filename }}
+          target: /home/shavika-tams
+
+      - name: Move application properties file to remote server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.BACKEND_DROPLET_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 600s
+          overwrite: true
+          source: ${{ steps.vars.outputs.working-directory }}/src/main/resources/application-${{ steps.vars.outputs.environment }}.yml
           target: /home/shavika-tams
 
       - name: Run the application in server
@@ -91,6 +102,9 @@ jobs:
           script: |
             echo "=============> Login to server.........."
             cd /home/shavika-tams
+            pwd
+            ls -l
+            cd ${{ steps.vars.outputs.working-directory }}/src/main/resources/
             pwd
             ls -l
 
