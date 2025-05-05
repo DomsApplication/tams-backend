@@ -66,7 +66,7 @@ jobs:
 
       - name: Build and package with maven
         run: |
-          cd ${{ step.vars.outputs.working-directory }}
+          cd ${{ steps.vars.outputs.working-directory }}
           mvn clean package -Dmaven.test.skip
 
       - name: Check path details
