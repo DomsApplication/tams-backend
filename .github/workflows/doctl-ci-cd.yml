@@ -78,18 +78,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 600s
           overwrite: true
-          source: ${{ steps.vars.outputs.working-directory }}/target/${{ steps.vars.outputs.jar-filename }}
-          target: /home/shavika-tams
-
-      - name: Move application properties file to remote server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ vars.BACKEND_DROPLET_IP }}
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 600s
-          overwrite: true
-          source: ${{ steps.vars.outputs.working-directory }}/src/main/resources/application-${{ steps.vars.outputs.environment }}.yml
+          source: ${{ steps.vars.outputs.working-directory }}/target/${{ steps.vars.outputs.jar-filename }}/
           target: /home/shavika-tams
 
       - name: Run the application in server
