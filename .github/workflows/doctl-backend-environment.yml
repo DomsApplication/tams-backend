@@ -135,4 +135,4 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 900s
-          script_path: ./.github/workflows/script/backendProvision.sh
+          script_path: script/backendProvision.sh
