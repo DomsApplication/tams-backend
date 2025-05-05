@@ -103,7 +103,7 @@ jobs:
             echo "=============> Login to server.........."
             cd /home/shavika-tams
             pwd
-            ls l
+            ls -l
 
 
 
