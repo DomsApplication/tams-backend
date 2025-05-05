@@ -78,7 +78,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 600s
           overwrite: true
-          source: ${{ steps.vars.outputs.working-directory }}/target/${{ steps.vars.outputs.jar-filename }}/
+          source: ./backend/target/shavika-websocket-standalone-1.0.0.jar
           target: /home/shavika-tams
 
       - name: Run the application in server
