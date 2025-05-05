@@ -8,6 +8,16 @@ on:
         required: true
         type: environment
         default: "dev"
+      working-directory:
+        description: "Working Directory"
+        required: true
+        type: string
+        default: './backend'
+      jar-filename:
+        description: "Working Directory"
+        required: true
+        type: string
+        default: 'shavika-websocket-standalone-1.0.0.jar'
 
 permissions:
   contents: write
@@ -24,6 +34,12 @@ jobs:
       packages: read
 
     steps:
+      - name: Check out code
+        id: vars
+        run: |
+          echo "working-directory=${{ inputs.working-directory || './backend' }}" >> $GITHUB_OUTPUT
+          echo "jar-filename=${{ inputs.jar-filename || 'shavika-websocket-standalone-1.0.0.jar' }}" >> $GITHUB_OUTPUT
+
       - name: Check out code
         uses: actions/checkout@v3
         with:
@@ -48,11 +64,16 @@ jobs:
           echo github.event.pull_request.merged: ${{ github.event.pull_request.merged }}
           echo HOST: ${{ vars.BACKEND_DROPLET_IP }}
 
-      - name: Build with maven
+      - name: Build and package with maven
         run: |
-          cd ./backend
+          cd ${{ steps.vars.outputs.working-directory }}
+          mvn clean package -Dmaven.test.skip
+
+      - name: Check path details
+        run: |
+          cd ${{ steps.vars.outputs.working-directory }}/target
           pwd
-          mvn clean package
+          ls -l
 
 
 
