@@ -26,7 +26,7 @@ jobs:
   provision:
     name: Provision and Deployment
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'default' }}
+    environment: ${{ github.event.inputs.environment || 'dev' }}
     permissions:
       id-token: write
       contents: write
@@ -37,6 +37,7 @@ jobs:
       - name: Check out code
         id: vars
         run: |
+          echo "environment=${{ inputs.environment || 'dev' }}" >> $GITHUB_OUTPUT
           echo "working-directory=${{ inputs.working-directory || './backend' }}" >> $GITHUB_OUTPUT
           echo "jar-filename=${{ inputs.jar-filename || 'shavika-websocket-standalone-1.0.0.jar' }}" >> $GITHUB_OUTPUT
 
@@ -69,11 +70,54 @@ jobs:
           cd ${{ steps.vars.outputs.working-directory }}
           mvn clean package -Dmaven.test.skip
 
-      - name: Check path details
-        run: |
-          cd ${{ steps.vars.outputs.working-directory }}/target
-          pwd
-          ls -l
+      - name: Move application package to remote server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.BACKEND_DROPLET_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 600s
+          overwrite: true
+          source: ${{ steps.vars.outputs.working-directory }}/target/${{ steps.vars.outputs.jar-filename }}
+          target: /home/shavika-tams
+
+      - name: Move application properties file to remote server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.BACKEND_DROPLET_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 600s
+          overwrite: true
+          source: ${{ steps.vars.outputs.working-directory }}/src/main/resources/application-${{ steps.vars.outputs.environment }}.yml
+          target: /home/shavika-tams
+
+      - name: Run the application in server
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: ${{ vars.BACKEND_DROPLET_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 900s
+          script: |
+            echo "=============> Login to server.........."
+            cd /home/shavika-tams
+            mv ${{ steps.vars.outputs.working-directory }}/src/main/resources/application-${{ steps.vars.outputs.environment }}.yml  /home/shavika-tams
+            mv ${{ steps.vars.outputs.working-directory }}/target/${{ steps.vars.outputs.jar-filename }} /home/shavika-tams
+            chmod 777 ${{ steps.vars.outputs.jar-filename }}
+            rm -r backend/
+            pwd
+            ls -l
+
+            # Run new JAR in background with config and capture PID
+            echo "Starting new application..."
+            nohup java -jar ${{ steps.vars.outputs.jar-filename }} --spring.config.location=application-${{ steps.vars.outputs.environment }}.yml > app.log 2>&1 &
+            echo $! > app.pid
+
+            # Confirm
+            echo "Application started with PID: $(cat app.pid)"
+            ls -l
+
 
 
 
