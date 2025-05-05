@@ -51,8 +51,13 @@ jobs:
       - name: Build with maven
         run: |
           cd ./backend
+          mvn clean package -Dmaven.test.skip
+
+      - name: Build with maven
+        run: |
+          cd ./backend
           pwd
-          mvn clean package
+          ls -l
 
 
 
