@@ -104,6 +104,7 @@ jobs:
             cd /home/shavika-tams
             mv ${{ steps.vars.outputs.working-directory }}/src/main/resources/application-${{ steps.vars.outputs.environment }}.yml  /home/shavika-tams
             mv ${{ steps.vars.outputs.working-directory }}/target/${{ steps.vars.outputs.jar-filename }} /home/shavika-tams
+            chmod 777 ${{ steps.vars.outputs.jar-filename }}
             rm -r backend/
             pwd
             ls -l
