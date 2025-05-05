@@ -128,11 +128,11 @@ jobs:
           sleep 90  # Wait for 90 seconds before attempting SSH connection
 
       - name: Post Deployment install additional softwares
-        if: env.DROPLET_EXISTS == 'false'
+        if: env.DROPLET_EXISTS == 'true'
         uses: appleboy/ssh-action@v1.2.1
         with:
-          host: ${{ env.DROPLET_IP }}
+          host: ${{ env.BACKEND_DROPLET_IP }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 900s
-          script_path: ./.github/workflows/script/backen-provision.sh
+          script_path: ./.github/workflows/script/backendProvision.sh
