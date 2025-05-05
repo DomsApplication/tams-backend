@@ -1,4 +1,4 @@
-name: Provision backend environment
+name: doctl - Provision backend environment
 
 on:
   workflow_dispatch:
