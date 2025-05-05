@@ -119,7 +119,6 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           "/repos/${{ github.repository }}/environments/${{ env.DROPLET_NAME }}"
           gh variable set BACKEND_DROPLET_IP --env ${{ github.event.inputs.environment || 'N/A' }} --repo ${{ github.repository }} --body "${{ env.DROPLET_IP }}"
-          # echo -n "${{ env.DROPLET_IP }}" | gh secret set BACKEND_DROPLET_IP --env ${{ env.DROPLET_NAME }} --repo ${{ github.repository }}
 
       - name: Wait for SSH Service Initialization
         if: env.DROPLET_EXISTS == 'false'
@@ -131,8 +130,14 @@ jobs:
         if: env.DROPLET_EXISTS == 'false'
         uses: appleboy/ssh-action@v1.2.1
         with:
-          host: ${{ env.DROPLET_IP }}
+          host: ${{ vars.BACKEND_DROPLET_IP }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 900s
-          script_path: ./.github/workflows/script/backen-provision.sh
+          script: |
+            echo "=============> Installing Java 17 (OpenJDK)"
+            sudo apt-get install -y openjdk-17-jdk
+            echo "======================================================"
+            echo "Java version"
+            echo "======================================================"
+            java -version
