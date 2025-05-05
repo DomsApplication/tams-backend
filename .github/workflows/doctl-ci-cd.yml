@@ -102,9 +102,9 @@ jobs:
           script: |
             echo "=============> Login to server.........."
             cd /home/shavika-tams
-            pwd
-            ls -l
-            cd ${{ steps.vars.outputs.working-directory }}/src/main/resources/
+            mv ${{ steps.vars.outputs.working-directory }}/src/main/resources/application-${{ steps.vars.outputs.environment }}.yml  /home/shavika-tams
+            mv ${{ steps.vars.outputs.working-directory }}/target/${{ steps.vars.outputs.jar-filename }} /home/shavika-tams
+            rm -r backend/
             pwd
             ls -l
 
