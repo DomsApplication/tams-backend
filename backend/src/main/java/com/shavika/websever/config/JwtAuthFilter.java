@@ -32,6 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 path.equalsIgnoreCase("/api/login/token") ||
                 path.startsWith("/swagger-ui") ||
                 path.startsWith("/websocket") ||
+                path.startsWith("/api") ||
                 path.startsWith("/v3/api-docs");
     }
 
