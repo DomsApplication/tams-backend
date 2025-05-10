@@ -52,7 +52,7 @@ public class SetUserDataCommand implements Command {
 
         SetUserDataRequest request = SetUserDataRequest.builder()
                 .request("SetUserData")
-                .userID("1234")
+                .userID(userInfo.getUserId())
                 .type("Set")
                 .name(Utilities.encodeName(userInfo.getName()))
                 .privilege(userInfo.getPrivilege())
