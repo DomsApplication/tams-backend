@@ -20,7 +20,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "/api/health", "/api/login/token", "/swagger-ui/**", "/v3/api-docs/**", "/websocket").permitAll()
+                        //.requestMatchers("/api/login", "/api/health", "/api/login/token", "/swagger-ui/**", "/v3/api-docs/**", "/websocket").permitAll()
+                        .requestMatchers("/api/**","/websocket").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
