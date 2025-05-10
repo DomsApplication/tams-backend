@@ -1,7 +1,9 @@
 package com.shavika.websocket.datasource.entity;
 
+import com.shavika.websocket.datasource.repository.UserInfoEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @Builder
+@EntityListeners(UserInfoEntityListener.class)
 public class UserInfo extends BaseEntity {
 
     @Column(name = "user_id", nullable = false, unique = true)
@@ -46,5 +49,7 @@ public class UserInfo extends BaseEntity {
     @Column(name = "user_period_end")
     private LocalDateTime userPeriodEnd;
 
+    @Column(name = "device_user_id", unique = true, nullable = false)
+    private Long deviceUserId;
 
 }
