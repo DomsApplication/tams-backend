@@ -15,16 +15,16 @@ websocket:
     driver-class-name: com.mysql.cj.jdbc.Driver
     host: 127.0.0.1
     port: 3306
-    username: tams_user
-    password: tams_user
-    name: tams_java
+    username: tams_user1
+    password: tams_user1
+    name: tams_java1
 
 logging:
   path: ${SKMC_HOME}/log/
   level:
     root: INFO
     com:
-      shavika: INFO
+      tams: INFO
 
 cors:
   allowed-origins: http://localhost:3000,http://localhost:5173
