@@ -16,8 +16,8 @@ import java.util.concurrent.Executor;
 @SpringBootApplication
 @EnableAspectJAutoProxy
 @EnableAsync
-@EntityScan(basePackages = "com.tams")
-@EnableJpaRepositories(basePackages = "com.tams")
+@EntityScan(basePackages = "com.tams.webserver.datasource.entity")
+@EnableJpaRepositories(basePackages = "com.tams.webserver.datasource.repository")
 public class Application {
 
     public static void main(String[] args) {
