@@ -20,13 +20,13 @@
 
 ########## aws ECR tag & push  ##########
 ###Retrieve an authentication token and authenticate your Docker client to your registry. Use the AWS TOOLS for PowerShell:
-#aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <aws-account>.dkr.ecr.<region>.amazonaws.com
+#aws ecr get-loginEntity-password --region <region> | docker loginEntity --username AWS --password-stdin <aws-account>.dkr.ecr.<region>.amazonaws.com
 ###Build your Docker image using the following command.
 #docker buildx build --platform linux/amd64,linux/arm64 --tag <aws-account>.dkr.ecr.<region>.amazonaws.com/skmc:shavika-websocket_2024_12_29_08_45_20 --push .
 
 ########## Digital Ocean - Container Repository  ##########
 # https://docs.digitalocean.com/products/container-registry/getting-started/quickstart/#push-to-your-registry
-#doctl registry login
+#doctl registry loginEntity
 #docker tag shavika-websocket registry.digitalocean.com/tams-image-repo/shavika-websocket
 #docker push registry.digitalocean.com/tams-image-repo/shavika-websocket
 

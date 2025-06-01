@@ -10,10 +10,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-	<groupId>com.shavika.websocket</groupId>
-    <artifactId>shavika-server-websocket</artifactId>
+	<groupId>com.tams.webserver</groupId>
+    <artifactId>tams-server-webserver</artifactId>
     <version>1.0.0</version>
-    <name>shavika-websocket</name>
+    <name>tams-webserver</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -179,7 +179,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.shavika.websocket.standalone.Application</mainClass>
+                                    <mainClass>com.tams.webserver.Application</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
