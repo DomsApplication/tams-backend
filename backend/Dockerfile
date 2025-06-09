@@ -35,7 +35,7 @@ RUN apk update && apk upgrade -U -a
 
 RUN mkdir -m777 /etc/shavika-websocket
 ADD start-service.sh /etc/shavika-websocket
-ADD target/shavika-websocket-standalone-1.0.0.jar /etc/shavika-websocket
+ADD target/tams-webserver-standalone-1.0.0.jar /etc/shavika-websocket
 RUN chmod +x /etc/shavika-websocket/start-service.sh
 WORKDIR /etc/shavika-websocket
 
