@@ -28,7 +28,6 @@
     "static_sites": [],
     "jobs": [],
     "workers": [],
-    "databases": [],
-    "project": "TAMS"
+    "databases": []
   }
   
