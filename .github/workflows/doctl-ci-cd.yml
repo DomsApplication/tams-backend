@@ -78,11 +78,11 @@ jobs:
       - name: Build, Tag, Push Docker Image
         run: |
           cd ${{ steps.vars.outputs.working-directory }}
-          echo "Authenticate Docker with registry..."
+          echo "**** Authenticate Docker with registry..."
           doctl registry login
-          echo "Tag image with the fully qualified destination path..."
+          echo "**** Tag image with the fully qualified destination path..."
           docker tag shavika-websocket registry.digitalocean.com/${{ secrets.DOCR_REGISTRY_NAME }}/shavika-websocket
-          echo "Push the image to registry..."
+          echo "**** Push the image to registry..."
           docker push registry.digitalocean.com/${{ secrets.DOCR_REGISTRY_NAME }}/shavika-websocket
           echo "Image push is completed......"
 
