@@ -124,3 +124,8 @@ jobs:
             echo "Forcing redeploy to reflect latest image changes..."
             doctl apps redeploy $APP_ID
           fi
+
+      - name: Assign app to project 'TAMS'
+        run: |
+          APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep tams-web-application | awk '{print $1}')
+          doctl projects resources assign TAMS --resource "do:app:$APP_ID"          
