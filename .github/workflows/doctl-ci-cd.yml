@@ -84,6 +84,7 @@ jobs:
           docker tag shavika-websocket registry.digitalocean.com/${{ secrets.DOCR_REGISTRY_NAME }}/shavika-websocket
           echo "Push the image to registry..."
           docker push registry.digitalocean.com/${{ secrets.DOCR_REGISTRY_NAME }}/shavika-websocket
+          echo "Image push is completed......"
 
   CD:
     name: Deploy to App Platform
