@@ -7,7 +7,7 @@
         "source_dir": ".",
         "image": {
           "registry_type": "DOCR",
-          "registry": "tams-docker-registry-1",
+          "registry": "tams-docker-registry",
           "repository": "shavika-websocket",
           "tag": "latest"
         },
