@@ -90,3 +90,32 @@ jobs:
       - name: Confirm image pushed
         run: |
           echo "✅ Image pushed to DOCR: registry.digitalocean.com/${{ secrets.DOCR_REGISTRY_NAME }}/shavika-websocket:latest"
+
+  CD:
+    name: Deploy to App Platform
+    runs-on: ubuntu-latest
+    needs: CI
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Deploy to DigitalOcean App Platform
+        run: |
+          echo "Checking if app 'tams-web-application' exists..."
+          APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep tams-web-application | awk '{print $1}')
+
+          if [ -z "$APP_ID" ]; then
+            echo "App does not exist. Creating new app..."
+            doctl apps create --spec .github/workflows/tams-app-spec.json
+            # Wait for app to be fully created before restarting (redeploy ensures it's triggered)
+            APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep tams-web-application | awk '{print $1}')
+            echo "Forcing redeploy to ensure latest image..."
+            doctl apps redeploy $APP_ID
+          else
+            echo "App exists. Updating app with spec..."
+            doctl apps update $APP_ID --spec .github/workflows/tams-app-spec.json
+            echo "Forcing redeploy to reflect latest image changes..."
+            doctl apps redeploy $APP_ID
+          fi

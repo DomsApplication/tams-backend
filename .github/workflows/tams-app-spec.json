@@ -1,0 +1,34 @@
+{
+    "name": "tams-web-application",
+    "region": "blr",
+    "services": [
+      {
+        "name": "tams-web-application",
+        "source_dir": ".",
+        "image": {
+          "registry_type": "DOCR",
+          "registry": "tams-docker-registry",
+          "repository": "shavika-websocket",
+          "tag": "latest"
+        },
+        "envs": [
+          {
+            "key": "SKMC_HOME",
+            "value": "/etc/shavika-websocket",
+            "scope": "RUN_AND_BUILD_TIME"
+          }
+        ],
+        "http_port": 8999,
+        "instance_size_slug": "basic-xxs", 
+        "instance_count": 1,
+        "run_command": "",
+        "routes": [{ "path": "/" }]
+      }
+    ],
+    "static_sites": [],
+    "jobs": [],
+    "workers": [],
+    "databases": [],
+    "project": "TAMS"
+  }
+  
