@@ -1,5 +1,5 @@
-2024-09-01 13:05:05 [main] INFO  com.shavika.websocket.Application - Starting Application using Java 17.0.3.1 with PID 2432 (D:\1.shavika\DOMS\repository\web-socket\shavika-server-websocket\target\classes started by mbmah in D:\1.shavika\DOMS\repository\web-socket\shavika-server-websocket)
-2024-09-01 13:05:05 [main] INFO  com.shavika.websocket.Application - No active profile set, falling back to 1 default profile: "default"
+2024-09-01 13:05:05 [main] INFO  com.tams.websocket.Application - Starting Application using Java 17.0.3.1 with PID 2432 (D:\1.shavika\DOMS\repository\web-socket\shavika-server-websocket\target\classes started by mbmah in D:\1.shavika\DOMS\repository\web-socket\shavika-server-websocket)
+2024-09-01 13:05:05 [main] INFO  com.tams.websocket.Application - No active profile set, falling back to 1 default profile: "default"
 2024-09-01 13:05:06 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
 2024-09-01 13:05:06 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 78 ms. Found 1 JPA repository interface.
 2024-09-01 13:05:07 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8999 (http)
@@ -20,10 +20,10 @@
 2024-09-01 13:05:09 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
 2024-09-01 13:05:09 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8999"]
 2024-09-01 13:05:09 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8999 (http) with context path '/'
-2024-09-01 13:05:09 [main] INFO  com.shavika.websocket.Application - Started Application in 4.982 seconds (process running for 5.374)
+2024-09-01 13:05:09 [main] INFO  com.tams.websocket.Application - Started Application in 4.982 seconds (process running for 5.374)
 2024-09-01 13:07:02 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2024-09-01 13:07:15 [main] INFO  com.shavika.websocket.Application - Starting Application using Java 17.0.3.1 with PID 6436 (D:\1.shavika\DOMS\repository\web-socket\shavika-server-websocket\target\classes started by mbmah in D:\1.shavika\DOMS\repository\web-socket\shavika-server-websocket)
-2024-09-01 13:07:15 [main] INFO  com.shavika.websocket.Application - No active profile set, falling back to 1 default profile: "default"
+2024-09-01 13:07:15 [main] INFO  com.tams.websocket.Application - Starting Application using Java 17.0.3.1 with PID 6436 (D:\1.shavika\DOMS\repository\web-socket\shavika-server-websocket\target\classes started by mbmah in D:\1.shavika\DOMS\repository\web-socket\shavika-server-websocket)
+2024-09-01 13:07:15 [main] INFO  com.tams.websocket.Application - No active profile set, falling back to 1 default profile: "default"
 2024-09-01 13:07:16 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
 2024-09-01 13:07:16 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 75 ms. Found 1 JPA repository interface.
 2024-09-01 13:07:16 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8999 (http)
@@ -44,5 +44,5 @@
 2024-09-01 13:07:19 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
 2024-09-01 13:07:19 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8999"]
 2024-09-01 13:07:19 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8999 (http) with context path '/'
-2024-09-01 13:07:19 [main] INFO  com.shavika.websocket.Application - Started Application in 5.074 seconds (process running for 5.472)
+2024-09-01 13:07:19 [main] INFO  com.tams.websocket.Application - Started Application in 5.074 seconds (process running for 5.472)
 2024-09-01 13:07:45 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
