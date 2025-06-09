@@ -1,4 +1,4 @@
-name: doctl - Backend CI/CD Pipeline
+name: DO App Platform - Backend CI/CD Pipeline
 
 on:
   workflow_dispatch:
@@ -13,18 +13,18 @@ on:
         required: true
         type: string
         default: './backend'
-      jar-filename:
-        description: "Working Directory"
+      java-version:
+        description: "Define Java Version"
         required: true
         type: string
-        default: 'shavika-websocket-standalone-1.0.0.jar'
+        default: '17'
 
 permissions:
   contents: write
 
 jobs:
-  provision:
-    name: Provision and Deployment
+  CI:
+    name: Build and Push to Container
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'dev' }}
     permissions:
@@ -34,22 +34,27 @@ jobs:
       packages: read
 
     steps:
-      - name: Check out code
+      - name: Setup Environment variables
         id: vars
         run: |
           echo "environment=${{ inputs.environment || 'dev' }}" >> $GITHUB_OUTPUT
           echo "working-directory=${{ inputs.working-directory || './backend' }}" >> $GITHUB_OUTPUT
-          echo "jar-filename=${{ inputs.jar-filename || 'shavika-websocket-standalone-1.0.0.jar' }}" >> $GITHUB_OUTPUT
+          echo "java-version=${{ inputs.java-version || '17' }}" >> $GITHUB_OUTPUT
 
       - name: Check out code
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref_name }}
-      
-      - name: Install OpenJDK 17
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Install Java
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: ${{ steps.vars.outputs.java-version }}
           distribution: 'adopt'
           cache: maven
 
@@ -63,62 +68,11 @@ jobs:
           echo git_hash: $(git rev-parse --short "$GITHUB_SHA")
           echo git_branch: ${GITHUB_REF#refs/heads/}
           echo github.event.pull_request.merged: ${{ github.event.pull_request.merged }}
-          echo HOST: ${{ vars.BACKEND_DROPLET_IP }}
+          echo JAVA VERSION: ${{ inputs.java-version }}
 
       - name: Build and package with maven
         run: |
           cd ${{ steps.vars.outputs.working-directory }}
-          mvn clean package -Dmaven.test.skip
-
-      - name: Move application package to remote server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ vars.BACKEND_DROPLET_IP }}
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 600s
-          overwrite: true
-          source: ${{ steps.vars.outputs.working-directory }}/target/${{ steps.vars.outputs.jar-filename }}
-          target: /home/shavika-tams
-
-      - name: Move application properties file to remote server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ vars.BACKEND_DROPLET_IP }}
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 600s
-          overwrite: true
-          source: ${{ steps.vars.outputs.working-directory }}/src/main/resources/application-${{ steps.vars.outputs.environment }}.yml
-          target: /home/shavika-tams
-
-      - name: Run the application in server
-        uses: appleboy/ssh-action@v1.2.1
-        with:
-          host: ${{ vars.BACKEND_DROPLET_IP }}
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 900s
-          script: |
-            echo "=============> Login to server.........."
-            cd /home/shavika-tams
-            mv ${{ steps.vars.outputs.working-directory }}/src/main/resources/application-${{ steps.vars.outputs.environment }}.yml  /home/shavika-tams
-            mv ${{ steps.vars.outputs.working-directory }}/target/${{ steps.vars.outputs.jar-filename }} /home/shavika-tams
-            chmod 777 ${{ steps.vars.outputs.jar-filename }}
-            rm -r backend/
-            pwd
-            ls -l
-
-            # Run new JAR in background with config and capture PID
-            echo "Starting new application..."
-            nohup java -jar ${{ steps.vars.outputs.jar-filename }} --spring.config.location=application-${{ steps.vars.outputs.environment }}.yml > app.log 2>&1 &
-            echo $! > app.pid
-
-            # Confirm
-            echo "Application started with PID: $(cat app.pid)"
-            ls -l
-
-
-
-
+          mvn clean package -Dmaven.test.skip --file pom.xml
+      
 
