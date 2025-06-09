@@ -113,16 +113,16 @@ jobs:
 
           if [ -z "$APP_ID" ]; then
             echo "App does not exist. Creating new app..."
-            doctl apps create --spec .github/workflows/tams-app-spec.json
+            doctl apps create --spec .github/workflows/tams-app-spec.json --format ID,DefaultIngress,Created --wait --project-id TAMS  
             # Wait for app to be fully created before restarting (redeploy ensures it's triggered)
             APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep tams-web-application | awk '{print $1}')
-            echo "Forcing redeploy to ensure latest image..."
-            doctl apps redeploy $APP_ID
+            echo "Forcing RESTART to ensure latest image... $APP_ID"
+            doctl apps restart $APP_ID
           else
             echo "App exists. Updating app with spec..."
-            doctl apps update $APP_ID --spec .github/workflows/tams-app-spec.json
-            echo "Forcing redeploy to reflect latest image changes..."
-            doctl apps redeploy $APP_ID
+            doctl apps update $APP_ID --spec .github/workflows/tams-app-spec.json --format ID,DefaultIngress,Created --wait
+            echo "Forcing RESTART to reflect latest image changes...$APP_ID"
+            doctl apps restart $APP_ID
           fi
 
       - name: Assign app to project 'TAMS'
