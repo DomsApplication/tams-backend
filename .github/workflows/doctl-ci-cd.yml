@@ -75,21 +75,16 @@ jobs:
           cd ${{ steps.vars.outputs.working-directory }}
           mvn clean package -Dmaven.test.skip --file pom.xml
       
-      - name: Build Docker Image
+      - name: Build, Tag, Push Docker Image
         run: |
           cd ${{ steps.vars.outputs.working-directory }}
-          docker build -t registry.digitalocean.com/${{ secrets.DOCR_REGISTRY_NAME }}/shavika-websocket:latest .
-
-      - name: Authenticate Docker with DOCR
-        run: doctl registry login
-
-      - name: Push Docker Image to DOCR
-        run: |
-          docker push registry.digitalocean.com/${{ secrets.DOCR_REGISTRY_NAME }}/shavika-websocket:latest
-
-      - name: Confirm image pushed
-        run: |
-          echo "✅ Image pushed to DOCR: registry.digitalocean.com/${{ secrets.DOCR_REGISTRY_NAME }}/shavika-websocket:latest"
+          echo "Authenticate Docker with registry..."
+          doctl registry login
+          echo "Tag image with the fully qualified destination path..."
+          docker tag shavika-websocket registry.digitalocean.com/${{ secrets.DOCR_REGISTRY_NAME }}/shavika-websocket
+          echo "Push the image to registry..."
+          docker push registry.digitalocean.com/${{ secrets.DOCR_REGISTRY_NAME }}/shavika-websocket
+          echo "Image push is completed......"
 
   CD:
     name: Deploy to App Platform
@@ -136,8 +131,3 @@ jobs:
             echo "Forcing RESTART to reflect latest image changes...$APP_ID"
             doctl apps restart $APP_ID
           fi
-
-      - name: Assign app to project 'TAMS'
-        run: |
-          APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep tams-web-application | awk '{print $1}')
-          doctl projects resources assign TAMS --resource "do:app:$APP_ID"          
