@@ -27,8 +27,8 @@
 ########## Digital Ocean - Container Repository  ##########
 # https://docs.digitalocean.com/products/container-registry/getting-started/quickstart/#push-to-your-registry
 #doctl registry loginEntity
-#docker tag shavika-websocket registry.digitalocean.com/tams-image-repo/shavika-websocket
-#docker push registry.digitalocean.com/tams-image-repo/shavika-websocket
+#docker tag shavika-websocket registry.digitalocean.com/tams-docker-registry/shavika-websocket
+#docker push registry.digitalocean.com/tams-docker-registry/shavika-websocket
 
 FROM amazoncorretto:17-alpine3.15-jdk
 RUN apk update && apk upgrade -U -a
