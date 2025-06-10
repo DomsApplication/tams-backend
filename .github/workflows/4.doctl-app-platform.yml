@@ -1,0 +1,78 @@
+name: 4. doctl - Provision App Platform
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment selection"
+        required: true
+        type: environment
+        default: "dev"
+
+permissions:
+  contents: write
+
+jobs:
+  provision:
+    name: Provision and Deployment
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      packages: read
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Install required software-package
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Debug Information
+        run: |
+          echo environment: ${{ inputs.environment || 'N/A' }}
+
+      - name: Check if App Platform is Exists
+        run: |
+          APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep tams-web-application | awk '{print $1}')
+          if [[ -n "$APP_ID" ]]; then
+            echo "✅ App Platform already exists with ID: $APP_ID"
+            echo "APP_EXISTS=true" >> $GITHUB_ENV
+            echo "APP_ID=$APP_ID" >> $GITHUB_ENV
+          else
+            echo "❌ App Platform does not exist."
+            echo "APP_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Create DO App Platform
+        if: env.APP_EXISTS == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "App does not exist. Creating new app..."
+          doctl apps create --spec .github/workflows/tams-app-spec.json --format ID,DefaultIngress,Created --wait --project-id TAMS
+          
+          #Get App Platform ID for this application.
+          APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep tams-web-application | awk '{print $1}')
+          echo "APP_ID=$APP_ID" >> $GITHUB_ENV
+          echo "App Platform created...."
+
+      - name: Update DO App Platform
+        if: env.APP_EXISTS == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "App exists. Updating app with spec..."
+          doctl apps update $APP_ID --spec .github/workflows/tams-app-spec.json --format ID,DefaultIngress,Created --wait
+          echo "App Platform updated...."

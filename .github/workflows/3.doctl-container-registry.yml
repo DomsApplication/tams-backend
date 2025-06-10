@@ -63,7 +63,7 @@ jobs:
           echo "Creating container registry 'tams-docker-registry'..."
           
           # Create the container registry in blr1 (Bangalore), BASIC
-          doctl registry create tams-docker-registry --region blr --subscription-tier basic
+          doctl registry create tams-docker-registry --region blr1 --subscription-tier basic
           echo "Registry created."
 
         # Step 4: Set Container Registry name in Github environments   
