@@ -1,4 +1,4 @@
-name: DO App Platform - Backend CI/CD Pipeline
+name: 5. DO App Platform - CI/CD Pipeline
 
 on:
   workflow_dispatch:
@@ -118,22 +118,22 @@ jobs:
           echo github.event.pull_request.merged: ${{ github.event.pull_request.merged }}
           echo JAVA VERSION: ${{ inputs.java-version }}
 
-      - name: Deploy to DigitalOcean App Platform
+      - name: Check if App Platform is Exists
         run: |
-          echo "Checking if app 'tams-web-application' exists..."
           APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep tams-web-application | awk '{print $1}')
-
-          if [ -z "$APP_ID" ]; then
-            echo "App does not exist. Creating new app..."
-            doctl apps create --spec .github/workflows/tams-app-spec.json --format ID,DefaultIngress,Created --wait --project-id TAMS
-            # Wait for app to be fully created before restarting (redeploy ensures it's triggered)
-            APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep tams-web-application | awk '{print $1}')
+          if [[ -n "$APP_ID" ]]; then
+            echo "✅ App Platform already exists with ID: $APP_ID"
+            echo "APP_EXISTS=true" >> $GITHUB_ENV
+            echo "APP_ID=$APP_ID" >> $GITHUB_ENV
           else
-            echo "App exists. Updating app with spec..."
-            doctl apps update $APP_ID --spec .github/workflows/tams-app-spec.json --format ID,DefaultIngress,Created --wait
+            echo "❌ App Platform does not exist."
+            echo "APP_EXISTS=false" >> $GITHUB_ENV
           fi
 
       - name: Redeployment latest Image
+        if: env.APP_EXISTS == 'true'
+        shell: bash
         run: |
-          echo "APP ID: $APP_ID"
+          set -euo pipefail
+          echo "App is exist. APP ID: $APP_ID"
           doctl apps create-deployment $APP_ID --wait --force-rebuild true --format ID,Status
