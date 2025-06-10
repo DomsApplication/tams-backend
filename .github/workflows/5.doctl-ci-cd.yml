@@ -136,4 +136,4 @@ jobs:
         run: |
           set -euo pipefail
           echo "App is exist. APP ID: $APP_ID"
-          doctl apps create-deployment $APP_ID --wait --force-rebuild true --format ID,Status
+          doctl apps create-deployment $APP_ID --wait --force-rebuild true --format ID
