@@ -78,18 +78,18 @@ jobs:
       - name: Build Docker Image
         run: |
           cd ${{ steps.vars.outputs.working-directory }}
-          docker build -t registry.digitalocean.com/${{ env.DOCR_REGISTRY_NAME }}/shavika-websocket:latest .
+          docker build -t registry.digitalocean.com/${{ vars.DOCR_REGISTRY_NAME }}/shavika-websocket:latest .
 
       - name: Authenticate Docker with DOCR
         run: doctl registry login
 
       - name: Push Docker Image to DOCR
         run: |
-          docker push registry.digitalocean.com/${{ env.DOCR_REGISTRY_NAME }}/shavika-websocket:latest
+          docker push registry.digitalocean.com/${{ vars.DOCR_REGISTRY_NAME }}/shavika-websocket:latest
 
       - name: Confirm image pushed
         run: |
-          echo "✅ Image pushed to DOCR: registry.digitalocean.com/${{ env.DOCR_REGISTRY_NAME }}/shavika-websocket:latest"
+          echo "✅ Image pushed to DOCR: registry.digitalocean.com/${{ vars.DOCR_REGISTRY_NAME }}/shavika-websocket:latest"
 
   CD:
     name: Deploy to App Platform
