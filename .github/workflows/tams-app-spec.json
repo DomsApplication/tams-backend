@@ -18,6 +18,15 @@
             "scope": "RUN_AND_BUILD_TIME"
           }
         ],
+        "health_check": {
+          "initial_delay_seconds": 30,
+          "period_seconds": 10,
+          "timeout_seconds": 5,
+          "success_threshold": 2,
+          "failure_threshold": 2,
+          "http_path": "/api/health",
+          "port": 8999
+        },
         "http_port": 8999,
         "instance_size_slug": "basic-xxs", 
         "instance_count": 1,
