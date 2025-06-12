@@ -33,11 +33,11 @@
 FROM amazoncorretto:17-alpine3.15-jdk
 RUN apk update && apk upgrade -U -a
 
-RUN mkdir -m777 /etc/shavika-websocket
-ADD start-service.sh /etc/shavika-websocket
-ADD target/tams-webserver-standalone-1.0.0.jar /etc/shavika-websocket
-RUN chmod +x /etc/shavika-websocket/start-service.sh
-WORKDIR /etc/shavika-websocket
+RUN mkdir -m777 /etc/tams-webserver
+ADD start-service.sh /etc/tams-webserver
+ADD target/tams-webserver-1.0.0.jar /etc/tams-webserver
+RUN chmod +x /etc/tams-webserver/start-service.sh
+WORKDIR /etc/tams-webserver
 
 ENV JVM_XMX=4096m
 EXPOSE 8999
