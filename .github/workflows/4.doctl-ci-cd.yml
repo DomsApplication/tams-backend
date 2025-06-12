@@ -184,4 +184,4 @@ jobs:
       - name: Trigger garbage collection
         run: |
           echo "🚮 Trigger registry garbage collection"
-          doctl registry garbage-collection start --force
+          doctl registry garbage-collection start ${{ vars.DOCR_REGISTRY_NAME }} --force
