@@ -27,4 +27,4 @@ logging:
       tams: INFO
 
 cors:
-  allowed-origins: http://localhost:3000,http://localhost:5173
+  allowed-origins: http://localhost:3000,http://localhost:5173,https://app.merav.co.in
