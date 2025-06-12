@@ -164,21 +164,24 @@ jobs:
           echo git_branch: ${GITHUB_REF#refs/heads/}
           echo github.event.pull_request.merged: ${{ github.event.pull_request.merged }}
 
-      - name: Check if Container Registry is Exists
+      - name: Remove <none> tags from Container Registry - Repository
         run: |
-          REGISTRY_ID=$(doctl registry get ${{ vars.DOCR_REGISTRY_NAME }} --format Name,Endpoint --no-header | grep ${{ vars.DOCR_REGISTRY_NAME }} | awk '{print $1}')
-          if [[ -n "$REGISTRY_ID" ]]; then
-            echo "✅ Container Registry already exists with ID: $REGISTRY_ID"
-            echo "REGISTRY_EXISTS=true" >> $GITHUB_ENV
-            echo "REGISTRY_ID=$REGISTRY_ID" >> $GITHUB_ENV
+          REPO="${{ vars.DOCR_REGISTRY_NAME }}/tams-webserver"
+          echo "Fetching manifest list for $REPO"
+          # Get all manifest digests, filter those with missing tags
+          DIGESTS=$(doctl registry repository list-manifests "$REPO" --output json \
+            | jq -r '.[] | select(.tags == null or .tags == [] or (.tags[] | select(. == "latest") | not)) | .digest')
+
+          if [ -z "$DIGESTS" ]; then
+            echo "✅ No untagged images (none) found in $REPO"
           else
-            echo "❌ Container Registry does not exist."
-            echo "REGISTRY_EXISTS=false" >> $GITHUB_ENV
+            for DIG in $DIGESTS; do
+              echo "Deleting untagged manifest: $DIG"
+              doctl registry repository delete-manifest "$REPO" "$DIG" -f
+            done
           fi
 
-      - name: Cleanup old images from Container Registry
-        uses: henrik242/docr-image-remove@v1
-        with:
-          image_repository: ${{ vars.DOCR_REGISTRY_NAME }}
-          buffer_size: 0
-          exclude: ^(latest|tag1|tag2)$
+      - name: Trigger garbage collection
+        run: |
+          echo "🚮 Trigger registry garbage collection"
+          doctl registry garbage-collection start --force
