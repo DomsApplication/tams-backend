@@ -8,13 +8,13 @@
         "image": {
           "registry_type": "DOCR",
           "registry": "tams-docker-registry",
-          "repository": "shavika-websocket",
+          "repository": "tams-webserver",
           "tag": "latest"
         },
         "envs": [
           {
             "key": "SKMC_HOME",
-            "value": "/etc/shavika-websocket",
+            "value": "/etc/tams-webserver",
             "scope": "RUN_AND_BUILD_TIME"
           }
         ],

@@ -1,4 +1,4 @@
-name: 3. doctl - Provision Container Registry
+name: 2. doctl - Provision Container Registry
 
 on:
   workflow_dispatch:
@@ -44,7 +44,7 @@ jobs:
         # Step 2: check is Registry exists
       - name: Check if Container Registry is Exists
         run: |
-          REGISTRY_ID=$(doctl registry get tams-docker-registry --format Name,Endpoint --no-header | grep tams-docker-registry | awk '{print $1}')
+          REGISTRY_ID=$(doctl registry get ${{ vars.DOCR_REGISTRY_NAME }} --format Name,Endpoint --no-header | grep ${{ vars.DOCR_REGISTRY_NAME }} | awk '{print $1}')
           if [[ -n "$REGISTRY_ID" ]]; then
             echo "✅ Container Registry already exists with ID: $REGISTRY_ID"
             echo "REGISTRY_EXISTS=true" >> $GITHUB_ENV
@@ -60,21 +60,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "Creating container registry 'tams-docker-registry'..."
+          echo "Creating container registry '${{ vars.DOCR_REGISTRY_NAME }}'..."
           
           # Create the container registry in blr1 (Bangalore), BASIC
-          doctl registry create tams-docker-registry --region blr1 --subscription-tier basic
+          doctl registry create ${{ vars.DOCR_REGISTRY_NAME }} --region blr1 --subscription-tier basic
           echo "Registry created."
-
-        # Step 4: Set Container Registry name in Github environments   
-      - name: Set Container Registry environments in GitHub Secrets
-        if: env.REGISTRY_EXISTS == 'false'
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        run: |
-          gh api \
-          -X PUT \
-          -H "Accept: application/vnd.github.v3+json" \
-          "/repos/${{ github.repository }}/environments/${{ github.event.inputs.environment || 'N/A' }}"
-          # Set environment variables
-          gh variable set DOCR_REGISTRY_NAME --repo ${{ github.repository }} --body "tams-docker-registry"

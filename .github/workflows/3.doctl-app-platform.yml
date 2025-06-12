@@ -1,4 +1,4 @@
-name: 4. doctl - Provision App Platform
+name: 3. doctl - Provision App Platform
 
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
 
       - name: Get project details
         run: |
-          PROJECT_ID=$(doctl projects list --format ID,Name --no-header | awk -v name=TAMS '$2 == name {print $1}')
+          PROJECT_ID=$(doctl projects list --format ID,Name --no-header | awk -v name=${{ vars.PROJECT_NAME }} '$2 == name {print $1}')
           if [[ -z "$PROJECT_ID" ]]; then
             echo "❌ Error: Project 'TAMS' not found!"
             exit 1
