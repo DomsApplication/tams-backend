@@ -17,7 +17,7 @@ public class ApiController {
 
     @GetMapping("/health")
     public ResponseEntity<HealthCheck> healthCheck() {
-        HealthCheck response = HealthCheck.builder().service_status("Service is Up.").build();
+        HealthCheck response = HealthCheck.builder().service_status("Service is Up & Running....").build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
