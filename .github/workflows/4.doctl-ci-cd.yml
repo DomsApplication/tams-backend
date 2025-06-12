@@ -176,9 +176,9 @@ jobs:
             echo "REGISTRY_EXISTS=false" >> $GITHUB_ENV
           fi
 
-      - name: Cleanup DOCR container registry
-        if: env.REGISTRY_EXISTS == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          doctl registry garbage-collection start ${{ vars.DOCR_REGISTRY_NAME }} --include-untagged-manifests true --force true
+      - name: Cleanup old images from Container Registry
+        uses: henrik242/docr-image-remove@v1
+        with:
+          image_repository: ${{ vars.DOCR_REGISTRY_NAME }}
+          buffer_size: 0
+          exclude: ^(latest|tag1|tag2)$
