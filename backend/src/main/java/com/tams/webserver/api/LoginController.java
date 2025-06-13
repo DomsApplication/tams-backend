@@ -5,7 +5,9 @@ import com.tams.webserver.api.webmodels.LoginBasicAuth;
 import com.tams.webserver.api.webmodels.LoginRequest;
 import com.tams.webserver.api.webmodels.TokenResponse;
 import com.tams.webserver.services.LoginService;
+import com.tams.webserver.utils.Utilities;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,9 @@ public class LoginController {
     @PostMapping
     public ResponseEntity<?> createLogin(@RequestBody LoginRequest loginRequest) {
         try {
+            if(loginRequest == null) {
+                throw new RuntimeException("Login details is empty, Try again.");
+            }
             return new ResponseEntity<>(loginService.createLogin(loginRequest), HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,15 +93,10 @@ public class LoginController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<?> authenticate(@RequestBody LoginBasicAuth loginBasicAuth, HttpServletResponse response) {
+    public ResponseEntity<?> authenticate(@RequestBody LoginBasicAuth loginBasicAuth, HttpServletRequest request,
+                                          HttpServletResponse response) {
         try {
-            TokenResponse token = loginService.authenticate(loginBasicAuth);
-            // Set token in cookie
-            Cookie cookie = new Cookie("token", token.getToken());
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(30 * 60);
-            cookie.setPath("/");
-            response.addCookie(cookie);
+            TokenResponse token = loginService.authenticate(request, response, loginBasicAuth);
             return new ResponseEntity<>(token, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

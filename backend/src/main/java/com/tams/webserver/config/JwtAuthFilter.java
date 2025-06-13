@@ -16,8 +16,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
+import org.springframework.util.AntPathMatcher;
 import java.io.IOException;
+
+import static com.tams.webserver.utils.Utilities.SECURITY_REQUEST_MATCHERS;
 
 @Component
 @Slf4j
@@ -29,15 +31,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
+        for (String pattern : SECURITY_REQUEST_MATCHERS) {
+            if (pathMatcher.match(pattern, path)) {
+                return true;
+            }
+        }
+        return false;
+        /*
         return path.equalsIgnoreCase("/api/login") ||
                 path.equalsIgnoreCase("/api/login/token") ||
                 path.startsWith("/swagger-ui") ||
                 path.startsWith("/websocket") ||
                 path.startsWith("/api") ||
                 path.startsWith("/v3/api-docs");
+         */
     }
 
 

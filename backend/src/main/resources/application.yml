@@ -26,5 +26,10 @@ logging:
     com:
       tams: INFO
 
-cors:
-  allowed-origins: http://localhost:3000,http://localhost:5173,https://app.merav.co.in
+app:
+  token-expiry-minutes: 30
+  allowed-origins:
+    - http://localhost:3000
+    - http://localhost:4000
+    - http://localhost:5173
+    - https://app.merav.co.in
