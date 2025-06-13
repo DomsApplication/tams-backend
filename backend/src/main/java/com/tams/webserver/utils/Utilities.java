@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tams.webserver.api.webmodels.LoginResponse;
+import com.tams.webserver.api.webmodels.TokenResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -21,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class Utilities {
@@ -34,6 +39,12 @@ public class Utilities {
     public static final String HH_MM_SS = "H:m:s";
 
     private static final String SECRET_KEY = "Shav!ka_SKMC";
+
+    public static final String USER_ROLES = "ADMIN,USER";
+
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]{4,}@[A-Za-z0-9.-]+(\\.[A-Za-z]{2,})+$";
+
+    public static final String[] SECURITY_REQUEST_MATCHERS  = {"/api/login/token", "/api/health", "/swagger-ui/**", "/v3/api-docs/**"};
 
     public static String getSystemEv(String key) {
         return System.getenv(key);
@@ -421,7 +432,28 @@ public class Utilities {
         }
     }
 
-    public static String generateToken(LoginResponse loginResponse) throws  Exception {
+    public static void setCookieSession(HttpServletRequest request, HttpServletResponse response, String token,
+                                        int expMinutes) throws Exception {
+        // ✅ This is where update the cookie logic & Set token in cookie
+        Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(expMinutes * 60);
+        cookie.setPath("/");
+
+        // 🔒 Secure & SameSite=None for HTTPS
+        if (request.isSecure()) {
+            cookie.setSecure(true);
+            response.setHeader("Set-Cookie",
+                    String.format("token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d",
+                            token, expMinutes * 60));
+        } else {
+            // For localhost (HTTP)
+            response.addCookie(cookie);
+        }
+        //response.addCookie(cookie);
+    }
+
+    public static String generateToken(LoginResponse loginResponse, int expMinutes) throws  Exception {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", loginResponse.getUserId());
         claims.put("firstName", loginResponse.getFirstName());
@@ -433,7 +465,7 @@ public class Utilities {
                 .claims(claims)
                 .subject(loginResponse.getUserId())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1)) // 30 minutes validity
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * expMinutes))
                 .signWith(getSignInKey()).compact();
     }
 
@@ -490,22 +522,41 @@ public class Utilities {
         return true;
     }
 
+    public static List<String> getListOfRoles() throws Exception {
+        return Arrays.asList(USER_ROLES.split(","));
+    }
+    public static void validateEmail(String userId) throws IllegalArgumentException {
+        Pattern  email_pattern = Pattern.compile(EMAIL_REGEX);
+
+        if (userId == null || !email_pattern.matcher(userId).matches()) {
+            throw new IllegalArgumentException("Invalid email address: " + userId);
+        }
+    }
+
     public static void main(String[] args) throws Exception {
+        String str = "sys@test.co.in";
+        try {
+            Utilities.validateEmail(str);
+            System.out.println("Success...");
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid UserID, User ID should be valid email address.");
+        }
+        /*
         String str_date = "2024-11-3-T11:41:50Z";
-        /*String format = "yyyy-M-d-'T'H:m:s'Z'";
+        String format = "yyyy-M-d-'T'H:m:s'Z'";
         LocalDateTime ldt = Utilities.convertStringTimestamp(str_date, format);
         System.out.println("LDT:::" + ldt);
         LocalDate date = ldt.toLocalDate();
         System.out.println("date:::" + date);
         LocalTime time = ldt.toLocalTime();
         System.out.println("time:::" + time);
-        */
+
 
         LocalDateTime dateTme = Utilities.convertStringTimestamp(str_date, Utilities.YYY_MM_DD_T_HH_MM_SS_X);
         String date = Utilities.formatLocalDateTimeToUTCString(dateTme, "d/M/yyyy");
         String time = Utilities.formatLocalDateTimeToUTCString(dateTme, Utilities.HH_MM_SS);
         System.out.println("date:::" + date);
         System.out.println("time:::" + time);
+        */
     }
-
 }

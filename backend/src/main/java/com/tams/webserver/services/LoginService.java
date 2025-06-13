@@ -5,9 +5,12 @@ import com.tams.webserver.api.webmodels.LoginBasicAuth;
 import com.tams.webserver.api.webmodels.LoginRequest;
 import com.tams.webserver.api.webmodels.LoginResponse;
 import com.tams.webserver.api.webmodels.TokenResponse;
+import com.tams.webserver.config.ApplicationProperties;
 import com.tams.webserver.datasource.entity.LoginEntity;
 import com.tams.webserver.datasource.repository.LoginRepository;
 import com.tams.webserver.utils.Utilities;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,9 @@ public class LoginService {
 
     @Autowired
     private LoginRepository loginRepository;
+
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     @Transactional
     private LoginResponse saveOrUpdate(LoginEntity loginEntity) throws  Exception {
@@ -46,10 +52,21 @@ public class LoginService {
             throw new RuntimeException("userId/password/firstName/role should not be empty. ");
         }
 
+        try {
+            Utilities.validateEmail(loginRequest.getUserId().trim().toString());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid UserID, User ID should be valid email address.");
+        }
+
         Optional<LoginEntity> existingLogin = loginRepository.findByUserId(loginRequest.getUserId());
         if(existingLogin.isPresent()) {
             throw new RuntimeException("User: "+loginRequest.getUserId()+" is already exist.");
         }
+
+        if(!Utilities.getListOfRoles().contains(loginRequest.getRole())) {
+            throw new RuntimeException("User Role should be any one of these '"+Utilities.USER_ROLES+"'");
+        }
+
         LoginEntity loginEntity = LoginEntity.builder()
                 .userId(loginRequest.getUserId())
                 .password(Utilities.encryptPassword(loginRequest.getPassword()))
@@ -148,7 +165,8 @@ public class LoginService {
     }
 
     @Transactional
-    public TokenResponse authenticate(LoginBasicAuth loginBasicAuth) throws Exception {
+    public TokenResponse authenticate(HttpServletRequest request,
+                                      HttpServletResponse response, LoginBasicAuth loginBasicAuth) throws Exception {
         if(null == loginBasicAuth || null == loginBasicAuth.getUserId() || null == loginBasicAuth.getPassword()) {
             throw new RuntimeException("userId/password should not be empty.");
         }
@@ -171,7 +189,8 @@ public class LoginService {
             throw new RuntimeException("User: "+userId+" is already deactivated.");
         }
         LoginResponse loginResponse = this.getLoginResponse(loginEntity);
-        String token = Utilities.generateToken(loginResponse);
+        String token = Utilities.generateToken(loginResponse, applicationProperties.getTokenExpiryMinutes());
+        Utilities.setCookieSession(request, response, token, applicationProperties.getTokenExpiryMinutes());
         loginEntity.setLastLogin(Utilities.getCurrentDateTime());
         this.saveOrUpdate(loginEntity);
         return TokenResponse.builder()
