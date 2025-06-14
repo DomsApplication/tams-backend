@@ -23,7 +23,7 @@ public class LoginController {
 
     private LoginService loginService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createLogin(@RequestBody LoginRequest loginRequest) {
         try {
             if(loginRequest == null) {
@@ -115,4 +115,16 @@ public class LoginController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/roles")
+    public ResponseEntity<?> getRoles() {
+        try {
+            return new ResponseEntity<>(loginService.getAllRoles(), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ErrorResponse response = ErrorResponse.builder().message(e.getMessage()).build();
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

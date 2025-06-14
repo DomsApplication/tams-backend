@@ -44,7 +44,7 @@ public class Utilities {
 
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]{4,}@[A-Za-z0-9.-]+(\\.[A-Za-z]{2,})+$";
 
-    public static final String[] SECURITY_REQUEST_MATCHERS  = {"/api/login/token", "/api/health", "/swagger-ui/**", "/v3/api-docs/**"};
+    public static final String[] SECURITY_REQUEST_MATCHERS  = {"/api/login/token", "/api/login/roles", "/api/login/create", "/api/health", "/swagger-ui/**", "/v3/api-docs/**"};
 
     public static String getSystemEv(String key) {
         return System.getenv(key);
