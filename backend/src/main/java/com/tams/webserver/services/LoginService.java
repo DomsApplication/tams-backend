@@ -1,10 +1,7 @@
 package com.tams.webserver.services;
 
-import com.tams.webserver.api.webmodels.LoginBasicAuth;
+import com.tams.webserver.api.webmodels.*;
 
-import com.tams.webserver.api.webmodels.LoginRequest;
-import com.tams.webserver.api.webmodels.LoginResponse;
-import com.tams.webserver.api.webmodels.TokenResponse;
 import com.tams.webserver.config.ApplicationProperties;
 import com.tams.webserver.datasource.entity.LoginEntity;
 import com.tams.webserver.datasource.repository.LoginRepository;
@@ -16,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -199,4 +198,12 @@ public class LoginService {
                 .token(token)
                 .build();
     }
+
+    public List<RoleResponse> getAllRoles() throws  Exception {
+        List<RoleResponse> roleResponses = Utilities.getListOfRoles().stream()
+                .map(roleName -> RoleResponse.builder().name(roleName).build())
+                .collect(Collectors.toList());
+        return roleResponses;
+    }
+
 }
