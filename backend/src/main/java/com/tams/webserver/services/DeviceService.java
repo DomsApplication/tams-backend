@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,48 @@ public class DeviceService {
                         .hostAddress(deviceInfo.getHostAddress())
                         .hostPort(deviceInfo.getHostPort())
                         .lastConnectedTime(Utilities.formatLocalDateTimeToUTCString(deviceInfo.getLastConnectedTime(), Utilities.YYY_MM_DD_T_HH_MM_SS_Z))
+                        .isRegistered(deviceInfo.getIsRegistered())
+                        .build();
+
+                // Add the transformed response object to the response list
+                responseData.add(deviceInfoResponse);
+            }
+            // Return the transformed list of DeviceInfoResponse
+            return responseData;
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+    }
+
+    public List<DeviceInfoResponse> getAllDeviceInfo(Boolean isRegistered) throws Exception {
+        try {
+            // Fetch the list of DeviceInfo entities from the repository
+            List<DeviceInfo> entityData;
+            if (isRegistered){
+                entityData = deviceInfoRepository.findAllRegistered();
+            } else {
+                entityData = deviceInfoRepository.findAllUnRegistered();
+            }
+
+            // Create a list to hold the response data
+            List<DeviceInfoResponse> responseData = new ArrayList<>();
+
+            // Iterate through the entity list and convert each DeviceInfo to DeviceInfoResponse
+            for (DeviceInfo deviceInfo : entityData) {
+                DeviceInfoResponse deviceInfoResponse = DeviceInfoResponse.builder()
+                        .id(deviceInfo.getId()) // assuming 'id' is inherited from BaseEntity
+                        .deviceSerialNo(deviceInfo.getDeviceSerialNo())
+                        .cloudId(deviceInfo.getCloudId())
+                        .productName(deviceInfo.getProductName())
+                        .terminalType(deviceInfo.getTerminalType())
+                        .status(deviceInfo.getStatus().name()) // Enum to String conversion
+                        .registeredOn(Utilities.formatLocalDateTimeToUTCString(deviceInfo.getRegisteredOn(), Utilities.YYY_MM_DD_T_HH_MM_SS_Z))
+                        .loggedOn(Utilities.formatLocalDateTimeToUTCString(deviceInfo.getLoggedOn(), Utilities.YYY_MM_DD_T_HH_MM_SS_Z))
+                        .sessionId(deviceInfo.getSessionId())
+                        .hostAddress(deviceInfo.getHostAddress())
+                        .hostPort(deviceInfo.getHostPort())
+                        .lastConnectedTime(Utilities.formatLocalDateTimeToUTCString(deviceInfo.getLastConnectedTime(), Utilities.YYY_MM_DD_T_HH_MM_SS_Z))
+                        .isRegistered(deviceInfo.getIsRegistered())
                         .build();
 
                 // Add the transformed response object to the response list
@@ -118,5 +161,15 @@ public class DeviceService {
             }
         }
         return "Successfully updated the command flag '" + deviceDataSyncRequest.getDeviceSerialNo() + "'";
+    }
+
+    @Transactional
+    public int updateDeviceInfo(Map<String, String> updatedData) throws  Exception {
+        int status = 0;
+        if(null != updatedData) {
+            String deviceSerialNo = updatedData.get("deviceSerialNo");
+            status = deviceInfoRepository.registerDevice(deviceSerialNo);
+        }
+        return status;
     }
 }

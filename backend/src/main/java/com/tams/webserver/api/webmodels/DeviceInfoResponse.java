@@ -52,4 +52,7 @@ public class DeviceInfoResponse {
     @JacksonXmlProperty(localName = "last_connected_time")
     private String lastConnectedTime;
 
+    @JacksonXmlProperty(localName = "is_registered")
+    private Boolean isRegistered;
+
 }

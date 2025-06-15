@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -26,6 +27,30 @@ public class DeviceContoller {
     public ResponseEntity getAllDevices() {
         try {
             List<DeviceInfoResponse> deviceList = deviceService.getAllDeviceInfo();
+            return new ResponseEntity<>(deviceList, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ErrorResponse resposne = ErrorResponse.builder().message(e.getMessage()).build();
+            return new ResponseEntity<>(resposne, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("registered")
+    public ResponseEntity getAllRegisteredDevices() {
+        try {
+            List<DeviceInfoResponse> deviceList = deviceService.getAllDeviceInfo(true);
+            return new ResponseEntity<>(deviceList, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ErrorResponse resposne = ErrorResponse.builder().message(e.getMessage()).build();
+            return new ResponseEntity<>(resposne, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("unregistered")
+    public ResponseEntity getAllUnRegisteredDevices() {
+        try {
+            List<DeviceInfoResponse> deviceList = deviceService.getAllDeviceInfo(false);
             return new ResponseEntity<>(deviceList, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,6 +89,18 @@ public class DeviceContoller {
     public ResponseEntity<?> updateuserFlags(@RequestBody DeviceDataSyncRequest deviceDataSyncRequest) {
         try {
             return new ResponseEntity<>(deviceService.updateDeviceCommandFlags(deviceDataSyncRequest), HttpStatus.OK);
+        } catch (Exception e) {
+            // Handle exceptions and return error response
+            e.printStackTrace();
+            ErrorResponse response = ErrorResponse.builder().message(e.getMessage()).build();
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerDevice(@RequestBody Map<String,String> registerData) {
+        try {
+            return new ResponseEntity<>(deviceService.updateDeviceInfo(registerData), HttpStatus.OK);
         } catch (Exception e) {
             // Handle exceptions and return error response
             e.printStackTrace();
