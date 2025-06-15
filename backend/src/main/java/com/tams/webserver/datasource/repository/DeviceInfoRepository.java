@@ -22,6 +22,6 @@ public interface DeviceInfoRepository  extends JpaRepository<DeviceInfo, String>
     @Query("select di from DeviceInfo di where di.isRegistered = true")
     List<DeviceInfo> findAllRegistered();
 
-    @Query("select di from DeviceInfo di where di.isRegistered = false")
+    @Query("select di from DeviceInfo di where di.isRegistered = false or di.isRegistered = null")
     List<DeviceInfo> findAllUnRegistered();
 }
